@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IIS Library</title>
+    <!-- font awesome -->
+    <script src="https://kit.fontawesome.com/1b937cdc25.js" crossorigin="anonymous"></script>
+    <!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header & Navigation */
+        .header {
+            padding: 15px 0;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 0 20px;
+        }
+        
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: #003049;
+            transition: all 0.3s ease;
+            letter-spacing: -0.5px;
+            border-bottom: none;
+        }
+        
+        .navbar-brand:hover {
+            color: #FF4240;
+            transform: translateY(-1px);
+            text-decoration: none;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            gap: 5px;
+        }
+        
+        .nav-menu li {
+            margin: 0 5px;
+        }
+        
+        .nav-menu a {
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            letter-spacing: 0.3px;
+        }
+        
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #FF4240;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .nav-menu a:hover::after {
+            width: 70%;
+        }
+        
+        .nav-menu a:hover {
+            color: #FF4240;
+            background: rgba(255, 66, 64, 0.05);
+        }
+        
+        .nav-menu a.active {
+            color: #FF4240;
+            background: rgba(255, 66, 64, 0.08);
+        }
+        
+        .nav-menu a.active::after {
+            width: 70%;
+        }
+        
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+        
+        .nav-actions i {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 8px;
+            border-radius: 50%;
+        }
+        
+        .nav-actions i:hover {
+            color: #FF4240;
+            background: rgba(255, 66, 64, 0.08);
+            transform: translateY(-2px);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #FF4240, #ff6b6b);
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 66, 64, 0.2);
+            letter-spacing: 0.5px;
+        }
+        
+        .btn:hover {
+            background: linear-gradient(135deg, #ff6b6b, #FF4240);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 66, 64, 0.3);
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #2c3e50;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-menu-btn:hover {
+            background: rgba(255, 66, 64, 0.08);
+            color: #FF4240;
+        }
+        
+        .mobile-menu {
+            display: none;
+            width: 100%;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+        
+        .mobile-menu.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 60px 0;
+            background-color: #003049;
+        }
+        
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #cf9494;
+        }
+        
+        .hero-subtitle {
+            color: #d1dfea;
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* Programs Section */
+        .programs-section {
+            padding: 60px 0;
+        }
+        
+        .programs-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .program-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .program-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: fill;
+        }
+        
+        .program-card-body {
+            padding: 20px;
+        }
+        
+        .program-card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .program-card-text {
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+        
+        /* Blog Section */
+        .blog-section {
+            padding: 60px 0;
+        }
+        
+        .blog-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .blog-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .blog-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .blog-card-body {
+            padding: 20px;
+        }
+        
+        .blog-card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .blog-card-text {
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+        
+        /* Contact Section */
+        .contact-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        }
+        
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 40px;
+            margin-top: 40px;
+        }
+        
+        .contact-info {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+        
+        .contact-info-item {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .contact-info-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .contact-info-item h3 {
+            color: #2c3e50;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .contact-info-item h3 i {
+            color: #FF4240;
+        }
+        
+        .contact-info-item p {
+            color: #6c757d;
+            line-height: 1.8;
+        }
+        
+        .contact-form {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .contact-form h3 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #2c3e50;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #FF4240;
+            box-shadow: 0 0 0 3px rgba(255, 66, 64, 0.1);
+        }
+        
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%232c3e50' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            padding-right: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-form {
+                padding: 25px;
+            }
+        }
+        
+        /* Footer Styles */
+        .footer {
+            background: linear-gradient(to right, #003049, #1a4d6b);
+            color: white;
+            padding: 60px 0 30px;
+            position: relative;
+        }
+        
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, #FF4240, #ff6b6b);
+        }
+        
+        .footer-content {
+            max-width: 1100px;
+            margin: auto;
+            text-align: center;
+        }
+        
+        .footer h3 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+        
+        .footer p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 25px;
+        }
+        
+        .footer-social {
+            margin: 30px 0;
+        }
+        
+        .footer-social a {
+            color: white;
+            margin: 0 15px;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .footer-social a:hover {
+            color: #FF4240;
+            transform: translateY(-3px);
+        }
+        
+        .footer-copyright {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* Utility Classes */
+        .text-red {
+            color: #FF4240;
+        }
+        
+        .bg-light-green {
+            background-color: #cadfa9;
+        }
+        
+        .bg-green {
+            background-color: #879276;
+        }
+        
+        .bg-light-blue {
+            background-color: #9ca8c9;
+        }
+        
+        /* Responsive Styles */
+        @media (min-width: 768px) {
+            .about-grid,
+            .contact-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .programs-grid,
+            .blog-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .programs-grid,
+            .blog-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .mobile-menu-btn {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .navbar-menu {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero-title {
+                font-size: 2.2rem;
+            }
+        }
+
+        /* Search Section Styles */
+        .search-section {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 40px 0;
+        }
+
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .search-select {
+            padding: 12px 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            background: white;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .search-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #FF4240, #ff6b6b);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 66, 64, 0.2);
+        }
+
+        /* Categories Section Styles */
+        .categories-section {
+            padding: 60px 0;
+            background: #fff;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .category-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-card i {
+            font-size: 2.5rem;
+            color: #FF4240;
+            margin-bottom: 20px;
+        }
+
+        .category-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .category-card p {
+            color: #6c757d;
+        }
+
+        /* Popular Section Styles */
+        .popular-section {
+            padding: 60px 0;
+            background: #f8f9fa;
+        }
+
+        .popular-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .popular-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .popular-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #FF4240;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .popular-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .popular-card-body {
+            padding: 20px;
+        }
+
+        .popular-card-body h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .popular-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .popular-stats span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .popular-stats i {
+            color: #FF4240;
+        }
+
+        @media (max-width: 768px) {
+            .search-box {
+                flex-direction: column;
+            }
+
+            .search-select,
+            .search-input,
+            .search-btn {
+                width: 100%;
+            }
+        }
+
+        /* Book Meta Styles */
+        .book-meta {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .book-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .book-meta i {
+            color: #FF4240;
+        }
+
+        /* Popular Books Section Styles */
+        .popular-books-section {
+            padding: 60px 0;
+            background: #f8f9fa;
+        }
+
+        .popular-books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .popular-book-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .popular-book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #FF4240;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .popular-book-body {
+            padding: 20px;
+        }
+
+        .popular-book-body h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .author {
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+
+        .book-stats {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .book-availability {
+            margin: 15px 0;
+        }
+
+        .available {
+            color: #28a745;
+            font-weight: 500;
+        }
+
+        /* New Collections Section Styles */
+        .new-collections-section {
+            padding: 60px 0;
+            background: white;
+        }
+
+        .new-collections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .new-book-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .new-book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .new-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #28a745;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .new-book-body {
+            padding: 20px;
+        }
+
+        .new-book-body h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        @media (max-width: 768px) {
+            .popular-books-grid,
+            .new-collections-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Add this to your existing styles */
+        .call-number {
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .call-number i {
+            color: #FF4240;
+        }
+
+        /* Add these styles in the existing style section */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            margin-bottom: 15px;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .modal-header p {
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .form-control {
+            padding: 10px 12px;
+            font-size: 0.9rem;
+        }
+
+        textarea.form-control {
+            min-height: 80px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            font-size: 0.9rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <div class="navbar-brand">
+                    IIS Library
+                </div>
+                
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="navbar-menu" id="navbarMenu">
+                    <ul class="nav-menu">
+                        <li><a href="#home" class="active">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="books.html">Books</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="nav-actions">
+                    <i class="fas fa-search"></i>
+                    <a href="#" class="btn">Get Book</a>
+                </div>
+            </nav>
+            
+            <div class="mobile-menu" id="mobileMenu">
+                <ul class="nav-menu">
+                    <li><a href="#home" class="active">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="books.html">Books</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Home Section -->
+        <section class="hero" id="home">
+            <div class="container">
+                <h1 class="hero-title">Welcome to IIS Library.</h1>
+                <p class="hero-subtitle">A Place to Read, Think, and Discover.</p>
+            </div>
+        </section>
+
+        <!-- Add this after the hero section -->
+        <section class="search-section">
+            <div class="container">
+                <div class="search-container">
+                    <h2>Find Your Next Book</h2>
+                    <div class="search-box">
+                        <select class="search-select">
+                            <option value="all">All</option>
+                            <option value="title">Title</option>
+                            <option value="author">Author</option>
+                            <option value="subject">Subject</option>
+                            <option value="isbn">ISBN</option>
+                        </select>
+                        <input type="text" placeholder="Search for books..." class="search-input">
+                        <button class="search-btn">Search</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Add this before the programs section -->
+        <section class="categories-section">
+            <div class="container">
+                <h2 class="section-title">Browse by Category</h2>
+                <div class="categories-grid">
+                    <div class="category-card">
+                        <i class="fas fa-book"></i>
+                        <h3>Literature</h3>
+                        <p>Fiction, Poetry, Drama</p>
+                    </div>
+                    <div class="category-card">
+                        <i class="fas fa-flask"></i>
+                        <h3>Science</h3>
+                        <p>Physics, Chemistry, Biology</p>
+                    </div>
+                    <div class="category-card">
+                        <i class="fas fa-laptop-code"></i>
+                        <h3>Technology</h3>
+                        <p>Computers, Programming, AI</p>
+                    </div>
+                    <div class="category-card">
+                        <i class="fas fa-history"></i>
+                        <h3>History</h3>
+                        <p>World History, Biographies</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Programs Section -->
+        <section class="programs-section" id="programs">
+            <div class="container">
+                <h2 class="section-title">Information Science Books</h2>
+                <p class="section-subtitle">Explore our collection of Information Science and Library Management books</p>
+                
+                <div class="programs-grid">
+                    <!-- Book 1 -->
+                    <div class="program-card">
+                        <img src="Images/book1.jpeg" alt="Library and Information Sciences">
+                        <div class="program-card-body">
+                            <h3 class="program-card-title">Library and Information Sciences: Trends and Research</h3>
+                            <p class="program-card-text">Editors: Chuanfu Chen, Ronald Larsen</p>
+                            <div class="book-meta">
+                                <span><i class="fas fa-book"></i> Available: 3</span>
+                                <span><i class="fas fa-star"></i> 4.8</span>
+                            </div>
+                            <div class="call-number">
+                                <i class="fas fa-hashtag"></i> Call No: Z665 .L53 2023
+                            </div>
+                            <button class="btn">Request for Booking</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Book 2 -->
+                    <div class="program-card">
+                        <img src="Images/book2.jpeg" alt="Digital Libraries">
+                        <div class="program-card-body">
+                            <h3 class="program-card-title">Digital Libraries</h3>
+                            <p class="program-card-text">Editor: Fabrice Papy</p>
+                            <div class="book-meta">
+                                <span><i class="fas fa-book"></i> Available: 2</span>
+                                <span><i class="fas fa-star"></i> 4.5</span>
+                            </div>
+                            <div class="call-number">
+                                <i class="fas fa-hashtag"></i> Call No: ZA4080 .D54 2023
+                            </div>
+                            <button class="btn">Request for Booking</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Book 3 -->
+                    <div class="program-card">
+                        <img src="Images/book3.jpeg" alt="Library & Information Science">
+                        <div class="program-card-body">
+                            <h3 class="program-card-title">Library & Information Science</h3>
+                            <p class="program-card-text">Rakesh Kumar, C.K. Sharma</p>
+                            <div class="book-meta">
+                                <span><i class="fas fa-book"></i> Available: 4</span>
+                                <span><i class="fas fa-star"></i> 4.7</span>
+                            </div>
+                            <div class="call-number">
+                                <i class="fas fa-hashtag"></i> Call No: Z665 .K86 2023
+                            </div>
+                            <button class="btn">Request for Booking</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Book 4 -->
+                    <div class="program-card">
+                        <img src="Images/book4.jpeg" alt="New Directions in Information Organization">
+                        <div class="program-card-body">
+                            <h3 class="program-card-title">New Directions in Information Organization</h3>
+                            <p class="program-card-text">Editors: Jung-Ran Park, Lynne C. Howarth</p>
+                            <div class="book-meta">
+                                <span><i class="fas fa-book"></i> Available: 2</span>
+                                <span><i class="fas fa-star"></i> 4.6</span>
+                            </div>
+                            <div class="call-number">
+                                <i class="fas fa-hashtag"></i> Call No: Z666.5 .N49 2023
+                            </div>
+                            <button class="btn">Request for Booking</button>
+                        </div>
+                    </div>
+
+                    <!-- Book 5 -->
+                    <div class="program-card">
+                        <img src="Images/book1.jpeg" alt="Information Retrieval">
+                        <div class="program-card-body">
+                            <h3 class="program-card-title">Information Retrieval: A Health and Biomedical Perspective</h3>
+                            <p class="program-card-text">William Hersh</p>
+                            <div class="book-meta">
+                                <span><i class="fas fa-book"></i> Available: 3</span>
+                                <span><i class="fas fa-star"></i> 4.9</span>
+                            </div>
+                            <div class="call-number">
+                                <i class="fas fa-hashtag"></i> Call No: R858 .H47 2023
+                            </div>
+                            <button class="btn">Request for Booking</button>
+                        </div>
+                    </div>
+
+                    <!-- Book 6 -->
+                    <div class="program-card">
+                        <img src="Images/book2.jpeg" alt="Metadata">
+                        <div class="program-card-body">
+                            <h3 class="program-card-title">Metadata for Digital Collections</h3>
+                            <p class="program-card-text">Steven J. Miller</p>
+                            <div class="book-meta">
+                                <span><i class="fas fa-book"></i> Available: 2</span>
+                                <span><i class="fas fa-star"></i> 4.7</span>
+                            </div>
+                            <div class="call-number">
+                                <i class="fas fa-hashtag"></i> Call No: Z666.5 .M55 2023
+                            </div>
+                            <button class="btn">Request for Booking</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Most Popular Books Section -->
+        <section class="popular-books-section">
+            <div class="container">
+                <h2 class="section-title">Most Popular Books</h2>
+                <p class="section-subtitle">Our most borrowed and highly rated books</p>
+                
+                <div class="popular-books-grid">
+                    <div class="popular-book-card">
+                        <div class="popular-badge">Best Seller</div>
+                        <img src="Images/book1.jpeg" alt="Popular Book">
+                        <div class="popular-book-body">
+                            <h3>Library and Information Sciences</h3>
+                            <p class="author">Chuanfu Chen, Ronald Larsen</p>
+                            <div class="book-stats">
+                                <span><i class="fas fa-users"></i> 200+ readers</span>
+                                <span><i class="fas fa-star"></i> 4.8</span>
+                            </div>
+                            <div class="book-availability">
+                                <span class="available">Available: 3 copies</span>
+                            </div>
+                            <button class="btn">Borrow Now</button>
+                        </div>
+                    </div>
+
+                    <div class="popular-book-card">
+                        <div class="popular-badge">Trending</div>
+                        <img src="Images/book2.jpeg" alt="Popular Book">
+                        <div class="popular-book-body">
+                            <h3>Digital Libraries</h3>
+                            <p class="author">Fabrice Papy</p>
+                            <div class="book-stats">
+                                <span><i class="fas fa-users"></i> 180+ readers</span>
+                                <span><i class="fas fa-star"></i> 4.7</span>
+                            </div>
+                            <div class="book-availability">
+                                <span class="available">Available: 2 copies</span>
+                            </div>
+                            <button class="btn">Borrow Now</button>
+                        </div>
+                    </div>
+
+                    <div class="popular-book-card">
+                        <div class="popular-badge">Most Rated</div>
+                        <img src="Images/book3.jpeg" alt="Popular Book">
+                        <div class="popular-book-body">
+                            <h3>Library & Information Science</h3>
+                            <p class="author">Rakesh Kumar, C.K. Sharma</p>
+                            <div class="book-stats">
+                                <span><i class="fas fa-users"></i> 150+ readers</span>
+                                <span><i class="fas fa-star"></i> 4.9</span>
+                            </div>
+                            <div class="book-availability">
+                                <span class="available">Available: 4 copies</span>
+                            </div>
+                            <button class="btn">Borrow Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- New Collections Section -->
+        <section class="new-collections-section">
+            <div class="container">
+                <h2 class="section-title">New Collections</h2>
+                <p class="section-subtitle">Recently added books to our library</p>
+                
+                <div class="new-collections-grid">
+                    <div class="new-book-card">
+                        <div class="new-badge">New</div>
+                        <img src="Images/book4.jpeg" alt="New Book">
+                        <div class="new-book-body">
+                            <h3>New Directions in Information Organization</h3>
+                            <p class="author">Jung-Ran Park, Lynne C. Howarth</p>
+                            <div class="book-meta">
+                                <span><i class="fas fa-calendar"></i> Added: 2 weeks ago</span>
+                                <span><i class="fas fa-book"></i> Available: 2</span>
+                            </div>
+                            <button class="btn">View Details</button>
+                        </div>
+                    </div>
+
+                    <div class="new-book-card">
+                        <div class="new-badge">New</div>
+                        <img src="Images/book1.jpeg" alt="New Book">
+                        <div class="new-book-body">
+                            <h3>Information Retrieval</h3>
+                            <p class="author">William Hersh</p>
+                            <div class="book-meta">
+                                <span><i class="fas fa-calendar"></i> Added: 1 week ago</span>
+                                <span><i class="fas fa-book"></i> Available: 3</span>
+                            </div>
+                            <button class="btn">View Details</button>
+                        </div>
+                    </div>
+
+                    <div class="new-book-card">
+                        <div class="new-badge">New</div>
+                        <img src="Images/book2.jpeg" alt="New Book">
+                        <div class="new-book-body">
+                            <h3>Metadata for Digital Collections</h3>
+                            <p class="author">Steven J. Miller</p>
+                            <div class="book-meta">
+                                <span><i class="fas fa-calendar"></i> Added: 3 days ago</span>
+                                <span><i class="fas fa-book"></i> Available: 2</span>
+                            </div>
+                            <button class="btn">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Blog Section -->
+        <section class="blog-section" id="blog">
+            <div class="container">
+                <h2 class="section-title">Our Service.</h2>
+                <p class="section-subtitle">Reliable Services, Enriching Every Learning Journey</p>
+                
+                <div class="blog-grid">
+                    <!-- Blog Post 1 -->
+                    <div class="blog-card">
+                        <img src="Images/circulation.jpeg" alt="Blog Post">
+                        <div class="blog-card-body">
+                            <h3 class="blog-card-title">Book Lending & Circulation.</h3>
+                            <p class="blog-card-text">Borrow books and other materials with easy checkout and return policies.</p>
+                            <button class="btn">Learn More</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Blog Post 2 -->
+                    <div class="blog-card">
+                        <img src="Images/digital.jpeg" alt="Blog Post">
+                        <div class="blog-card-body">
+                            <h3 class="blog-card-title">Digital Library Access</h3>
+                            <p class="blog-card-text">Enjoy 24/7 access to eBooks, journals, databases, and digital resources.</p>
+                            <button class="btn">Learn More</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Blog Post 3 -->
+                    <div class="blog-card">
+                        <img src="Images/repo.jpeg" alt="Blog Post">
+                        <div class="blog-card-body">
+                            <h3 class="blog-card-title">Institutional Repository</h3>
+                            <p class="blog-card-text">Access and contribute to research output, theses, and publications of the institution.</p>
+                            <button class="btn">Learn More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <h3>IIS Library</h3>
+            <p>A Place to Read, Think, and Discover.</p>
+            <div class="footer-social">
+                <a href="#" target="_blank">Facebook</a> |
+                <a href="#" target="_blank">Twitter</a> |
+                <a href="#" target="_blank">Instagram</a>
+            </div>
+            <p class="footer-copyright">&copy; 2025 All rights reserved to Nasir Uddin Nayeem.</p>
+        </div>
+    </footer>
+      
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('active');
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    const mobileMenu = document.getElementById('mobileMenu');
+                    mobileMenu.classList.remove('active');
+                }
+            });
+        });
+    </script>
+
+    <!-- Add this before the closing body tag -->
+    <div class="modal" id="bookRequestModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <div class="modal-header">
+                <h2>Request a Book</h2>
+                <p>Fill out the form below to request a book from our library</p>
+            </div>
+            <form id="bookRequestForm">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="bookTitle">Book Title</label>
+                    <input type="text" id="bookTitle" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="author">Author</label>
+                    <input type="text" id="author" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="requestType">Request Type</label>
+                    <select id="requestType" class="form-control" required>
+                        <option value="">Select Request Type</option>
+                        <option value="borrow">Borrow</option>
+                        <option value="purchase">Purchase Request</option>
+                        <option value="reserve">Reserve</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="message">Additional Notes</label>
+                    <textarea id="message" class="form-control"></textarea>
+                </div>
+                <button type="submit" class="btn">Submit Request</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Add this to your existing script section
+        const modal = document.getElementById('bookRequestModal');
+        const getBookBtn = document.querySelector('.nav-actions .btn');
+        const closeModal = document.getElementById('closeModal');
+        const bookRequestForm = document.getElementById('bookRequestForm');
+
+        // Open modal
+        getBookBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            modal.classList.add('active');
+        });
+
+        // Close modal
+        closeModal.addEventListener('click', function() {
+            modal.classList.remove('active');
+        });
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+
+        // Handle form submission
+        bookRequestForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                bookTitle: document.getElementById('bookTitle').value,
+                author: document.getElementById('author').value,
+                requestType: document.getElementById('requestType').value,
+                message: document.getElementById('message').value
+            };
+
+            // Here you would typically send the data to your server
+            console.log('Form submitted:', formData);
+
+            // Show success message
+            alert('Thank you for your request! We will contact you soon.');
+            
+            // Reset form and close modal
+            bookRequestForm.reset();
+            modal.classList.remove('active');
+        });
+    </script>
+</body>
+</html>

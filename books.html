@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books - IIS Library</title>
+    <!-- font awesome -->
+    <script src="https://kit.fontawesome.com/1b937cdc25.js" crossorigin="anonymous"></script>
+    <!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+            background: #f8f9fa;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header & Navigation */
+        .header {
+            padding: 15px 0;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 0 20px;
+        }
+        
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: #003049;
+            transition: all 0.3s ease;
+            letter-spacing: -0.5px;
+        }
+        
+        .navbar-brand:hover {
+            color: #FF4240;
+            transform: translateY(-1px);
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            gap: 5px;
+        }
+        
+        .nav-menu li {
+            margin: 0 5px;
+        }
+        
+        .nav-menu a {
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #FF4240;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .nav-menu a:hover::after {
+            width: 70%;
+        }
+        
+        .nav-menu a:hover {
+            color: #FF4240;
+            background: rgba(255, 66, 64, 0.05);
+        }
+        
+        .nav-menu a.active {
+            color: #FF4240;
+            background: rgba(255, 66, 64, 0.08);
+        }
+        
+        .nav-menu a.active::after {
+            width: 70%;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+        
+        .nav-actions i {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 8px;
+            border-radius: 50%;
+        }
+        
+        .nav-actions i:hover {
+            color: #FF4240;
+            background: rgba(255, 66, 64, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #FF4240, #ff6b6b);
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 66, 64, 0.2);
+            letter-spacing: 0.5px;
+        }
+        
+        .btn:hover {
+            background: linear-gradient(135deg, #ff6b6b, #FF4240);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 66, 64, 0.3);
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, #003049, #1a4d6b);
+            padding: 60px 0;
+            text-align: center;
+            color: white;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Books Grid */
+        .books-section {
+            padding: 80px 0;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .book-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .book-info {
+            padding: 20px;
+        }
+
+        .book-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .book-author {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .book-type {
+            display: inline-block;
+            padding: 5px 12px;
+            background: rgba(255, 66, 64, 0.1);
+            color: #FF4240;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        .book-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .book-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .book-meta i {
+            color: #FF4240;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: linear-gradient(to right, #003049, #1a4d6b);
+            color: white;
+            padding: 60px 0 30px;
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, #FF4240, #ff6b6b);
+        }
+
+        .footer-content {
+            max-width: 1100px;
+            margin: auto;
+            text-align: center;
+        }
+
+        .footer h3 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .footer p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 25px;
+        }
+
+        .footer-social {
+            margin: 30px 0;
+        }
+
+        .footer-social a {
+            color: white;
+            margin: 0 15px;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .footer-social a:hover {
+            color: #FF4240;
+            transform: translateY(-3px);
+        }
+
+        .footer-copyright {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        @media (max-width: 1200px) {
+            .books-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .books-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .navbar-menu {
+            display: flex;
+            align-items: center;
+        }
+
+        .mobile-menu {
+            display: none;
+            width: 100%;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+
+        .mobile-menu.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #2c3e50;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-btn:hover {
+            background: rgba(255, 66, 64, 0.08);
+            color: #FF4240;
+        }
+
+        @media (max-width: 767px) {
+            .navbar-menu {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <div class="navbar-brand">
+                    IIS Library
+                </div>
+                
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="navbar-menu" id="navbarMenu">
+                    <ul class="nav-menu">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="books.html" class="active">Books</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="nav-actions">
+                    <i class="fas fa-search"></i>
+                    <a href="#" class="btn">Get Book</a>
+                </div>
+            </nav>
+            
+            <div class="mobile-menu" id="mobileMenu">
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="books.html" class="active">Books</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <div class="page-header">
+        <div class="container">
+            <h1>Our Book Collection</h1>
+            <p>Explore our extensive collection of books across various subjects</p>
+        </div>
+    </div>
+
+    <section class="books-section">
+        <div class="container">
+            <div class="books-grid">
+                <!-- Book 1 -->
+                <div class="book-card">
+                    <img src="Images/book1.jpeg" alt="Library and Information Sciences" class="book-image">
+                    <div class="book-info">
+                        <h3 class="book-title">Library and Information Sciences</h3>
+                        <p class="book-author">Chuanfu Chen, Ronald Larsen</p>
+                        <span class="book-type">Information Science</span>
+                        <div class="book-meta">
+                            <span><i class="fas fa-book"></i> Available: 3</span>
+                            <span><i class="fas fa-star"></i> 4.8</span>
+                        </div>
+                        <button class="btn">Borrow Now</button>
+                    </div>
+                </div>
+
+                <!-- Book 2 -->
+                <div class="book-card">
+                    <img src="Images/book2.jpeg" alt="Digital Libraries" class="book-image">
+                    <div class="book-info">
+                        <h3 class="book-title">Digital Libraries</h3>
+                        <p class="book-author">Fabrice Papy</p>
+                        <span class="book-type">Technology</span>
+                        <div class="book-meta">
+                            <span><i class="fas fa-book"></i> Available: 2</span>
+                            <span><i class="fas fa-star"></i> 4.5</span>
+                        </div>
+                        <button class="btn">Borrow Now</button>
+                    </div>
+                </div>
+
+                <!-- Book 3 -->
+                <div class="book-card">
+                    <img src="Images/book3.jpeg" alt="Library & Information Science" class="book-image">
+                    <div class="book-info">
+                        <h3 class="book-title">Library & Information Science</h3>
+                        <p class="book-author">Rakesh Kumar, C.K. Sharma</p>
+                        <span class="book-type">Library Science</span>
+                        <div class="book-meta">
+                            <span><i class="fas fa-book"></i> Available: 4</span>
+                            <span><i class="fas fa-star"></i> 4.7</span>
+                        </div>
+                        <button class="btn">Borrow Now</button>
+                    </div>
+                </div>
+
+                <!-- Book 4 -->
+                <div class="book-card">
+                    <img src="Images/book4.jpeg" alt="New Directions in Information Organization" class="book-image">
+                    <div class="book-info">
+                        <h3 class="book-title">New Directions in Information Organization</h3>
+                        <p class="book-author">Jung-Ran Park, Lynne C. Howarth</p>
+                        <span class="book-type">Information Management</span>
+                        <div class="book-meta">
+                            <span><i class="fas fa-book"></i> Available: 2</span>
+                            <span><i class="fas fa-star"></i> 4.6</span>
+                        </div>
+                        <button class="btn">Borrow Now</button>
+                    </div>
+                </div>
+
+                <!-- Book 5 -->
+                <div class="book-card">
+                    <img src="Images/book1.jpeg" alt="Information Retrieval" class="book-image">
+                    <div class="book-info">
+                        <h3 class="book-title">Information Retrieval</h3>
+                        <p class="book-author">William Hersh</p>
+                        <span class="book-type">Information Science</span>
+                        <div class="book-meta">
+                            <span><i class="fas fa-book"></i> Available: 3</span>
+                            <span><i class="fas fa-star"></i> 4.9</span>
+                        </div>
+                        <button class="btn">Borrow Now</button>
+                    </div>
+                </div>
+
+                <!-- Book 6 -->
+                <div class="book-card">
+                    <img src="Images/book2.jpeg" alt="Metadata for Digital Collections" class="book-image">
+                    <div class="book-info">
+                        <h3 class="book-title">Metadata for Digital Collections</h3>
+                        <p class="book-author">Steven J. Miller</p>
+                        <span class="book-type">Digital Libraries</span>
+                        <div class="book-meta">
+                            <span><i class="fas fa-book"></i> Available: 2</span>
+                            <span><i class="fas fa-star"></i> 4.7</span>
+                        </div>
+                        <button class="btn">Borrow Now</button>
+                    </div>
+                </div>
+
+                <!-- Book 7 -->
+                <div class="book-card">
+                    <img src="Images/book3.jpeg" alt="Information Organization" class="book-image">
+                    <div class="book-info">
+                        <h3 class="book-title">Information Organization</h3>
+                        <p class="book-author">Arlene G. Taylor</p>
+                        <span class="book-type">Library Science</span>
+                        <div class="book-meta">
+                            <span><i class="fas fa-book"></i> Available: 3</span>
+                            <span><i class="fas fa-star"></i> 4.8</span>
+                        </div>
+                        <button class="btn">Borrow Now</button>
+                    </div>
+                </div>
+
+                <!-- Book 8 -->
+                <div class="book-card">
+                    <img src="Images/book4.jpeg" alt="Digital Library Management" class="book-image">
+                    <div class="book-info">
+                        <h3 class="book-title">Digital Library Management</h3>
+                        <p class="book-author">Mukesh Kumar</p>
+                        <span class="book-type">Digital Libraries</span>
+                        <div class="book-meta">
+                            <span><i class="fas fa-book"></i> Available: 2</span>
+                            <span><i class="fas fa-star"></i> 4.6</span>
+                        </div>
+                        <button class="btn">Borrow Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <h3>IIS Library</h3>
+            <p>A Place to Read, Think, and Discover.</p>
+            <div class="footer-social">
+                <a href="#" target="_blank">Facebook</a> |
+                <a href="#" target="_blank">Twitter</a> |
+                <a href="#" target="_blank">Instagram</a>
+            </div>
+            <p class="footer-copyright">&copy; 2025 All rights reserved to Nasir Uddin Nayeem.</p>
+        </div>
+    </footer>
+
+    <!-- Add Book Request Modal -->
+    <div class="modal" id="bookRequestModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <div class="modal-header">
+                <h2>Request a Book</h2>
+                <p>Fill out the form below to request a book from our library</p>
+            </div>
+            <form id="bookRequestForm">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="bookTitle">Book Title</label>
+                    <input type="text" id="bookTitle" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="author">Author</label>
+                    <input type="text" id="author" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="requestType">Request Type</label>
+                    <select id="requestType" class="form-control" required>
+                        <option value="">Select Request Type</option>
+                        <option value="borrow">Borrow</option>
+                        <option value="purchase">Purchase Request</option>
+                        <option value="reserve">Reserve</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="message">Additional Notes</label>
+                    <textarea id="message" class="form-control"></textarea>
+                </div>
+                <button type="submit" class="btn">Submit Request</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('active');
+        });
+
+        // Book Request Modal Functionality
+        const modal = document.getElementById('bookRequestModal');
+        const getBookBtn = document.querySelector('.nav-actions .btn');
+        const closeModal = document.getElementById('closeModal');
+        const bookRequestForm = document.getElementById('bookRequestForm');
+
+        // Open modal
+        getBookBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            modal.classList.add('active');
+        });
+
+        // Close modal
+        closeModal.addEventListener('click', function() {
+            modal.classList.remove('active');
+        });
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+
+        // Handle form submission
+        bookRequestForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                bookTitle: document.getElementById('bookTitle').value,
+                author: document.getElementById('author').value,
+                requestType: document.getElementById('requestType').value,
+                message: document.getElementById('message').value
+            };
+
+            // Here you would typically send the data to your server
+            console.log('Form submitted:', formData);
+
+            // Show success message
+            alert('Thank you for your request! We will contact you soon.');
+            
+            // Reset form and close modal
+            bookRequestForm.reset();
+            modal.classList.remove('active');
+        });
+    </script>
+</body>
+</html> 
